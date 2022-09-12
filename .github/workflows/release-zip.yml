@@ -32,15 +32,17 @@ jobs:
       shell: bash
       run: |
         python3 -m pip install littlefs-python
-        wget ${{env.FIRMWARE_URL}}/${{env.FIRMWARE_NAME}}.uf2
-        ./dir2uf2/dir2uf2 --append-to ${{env.FIRMWARE_NAME}}.uf2 --manifest galactic/uf2-manifest.txt --filename ${{env.RELEASE_FILE}}.uf2 galactic/
-        rm -rf galactic/.git*
-        rm -rf galactic/phew/.git*
 
-    - uses: vimtor/action-zip@v1
-      with:
-        files: galactic/
-        dest: ${{env.RELEASE_FILE}}.zip
+    - name: Pack filesystem to .uf2
+      shell: bash
+      run: |
+        ./dir2uf2/dir2uf2 --manifest galactic/uf2-manifest.txt --filename ${{env.RELEASE_FILE}}.uf2 galactic/
+
+    - name: Prepare .zip
+      shell: bash
+      run: |
+        cat uf2-manifest.txt | xargs -I % bash -c "ls -1 %" > zip-manifest.txt
+        zip {{env.RELEASE_FILE}}.zip -@ < cat uf2-manifest.txt
 
     - name: Store .zip as artifact
       uses: actions/upload-artifact@v2
