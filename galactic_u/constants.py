@@ -1,33 +1,22 @@
 # modules
-ENVIRO_UNKNOWN                = None
-ENVIRO_INDOOR                 = 1
-ENVIRO_GROW                   = 2
-ENVIRO_WEATHER                = 3
-ENVIRO_URBAN                  = 4
-ENVIRO_CAMERA                 = 5
+GALACTIC_UNKNOWN              = None
+GALACTIC_UNICORN              = 1
+
+# switch pins
+SWITCH_A_PIN                  = 0
+SWITCH_B_PIN                  = 1
+SWITCH_C_PIN                  = 3
+SWITCH_D_PIN                  = 6
+SWITCH_INCREASE_BRIGHT_PIN    = 7
+SWITCH_REDUCE_BRIGHT_PIN      = 8
+SWITCH_INCREASE_VOLUME_PIN    = 21
+SWITCH_REDUCE_VOLUME_PIN      = 26
+SWITCH_STANDBY_PIN            = 27
 
 # common pins
-HOLD_VSYS_EN_PIN              = 2
-EXTERNAL_INTERRUPT_PIN        = 3
 I2C_SDA_PIN                   = 4
 I2C_SCL_PIN                   = 5
-ACTIVITY_LED_PIN              = 6
-BUTTON_PIN                    = 7
-RTC_ALARM_PIN                 = 8
-RAIN_PIN                      = 10
+LIGHT_SENSE_PIN               = 28
 
 # system pins
 WIFI_CS_PIN                   = 25
-
-# wake reasons
-WAKE_REASON_UNKNOWN           = None
-WAKE_REASON_PROVISION         = 1
-WAKE_REASON_BUTTON_PRESS      = 2
-WAKE_REASON_RTC_ALARM         = 3
-WAKE_REASON_EXTERNAL_TRIGGER  = 4
-WAKE_REASON_RAIN_TRIGGER      = 5
-
-# warning led states
-WARN_LED_OFF = 0
-WARN_LED_ON = 1
-WARN_LED_BLINK = 2

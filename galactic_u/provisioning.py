@@ -3,6 +3,28 @@ import network, os, json, time, machine, sys
 import galactic_u.helpers as helpers
 import galactic_u
 from phew import logging, server, redirect, serve_file, render_template, access_point
+from galactic import GalacticUnicorn
+from picographics import PicoGraphics, DISPLAY_GALACTIC_UNICORN as DISPLAY
+
+gu = GalacticUnicorn()
+graphics = PicoGraphics(DISPLAY)
+
+FOREGROUND = (230, 210, 250)
+BACKGROUND = (20, 20, 120)
+
+
+def draw_text(text, fg, bg, x, y):
+  fg_pen = graphics.create_pen(fg[0], fg[1], fg[2])
+  bg_pen = graphics.create_pen(bg[0], bg[1], bg[2])
+
+  graphics.set_pen(bg_pen)
+  graphics.clear()
+
+  graphics.set_pen(fg_pen)
+  graphics.text(text, x, y, wordwrap=100, scale=1)
+
+  gu.update(graphics)
+
 
 DOMAIN = "pico.wireless"
 
@@ -39,8 +61,11 @@ logging.info("  -", model)
 
 # put board into access point mode
 logging.info("> going into access point mode")
-ap = access_point(f"galactic_u {model[:1].upper()}{model[1:]} Setup")
+ap_name = f"galactic_u {model[:1].upper()}{model[1:]} Setup"
+ap = access_point(ap_name)
 logging.info("  -", ap.ifconfig()[0])
+
+draw_text(ap_name, FOREGROUND, BACKGROUND, 0, -1)
 
 
 # dns server to catch all dns requests
@@ -61,6 +86,7 @@ def wrong_host_redirect(request):
 
 @server.route("/provision-welcome", methods=["GET"])
 def provision_welcome(request):
+  draw_text("Welcome!", FOREGROUND, BACKGROUND, 0, -1)
   response = render_template("galactic_u/html/welcome.html", board=model)
   return response
 
@@ -72,6 +98,7 @@ def provision_step_1_nickname(request):
     write_config()
     return redirect(f"http://{DOMAIN}/provision-step-2-wifi")
   else:
+    draw_text("Step 1: Nickname", FOREGROUND, BACKGROUND, 0, -1)
     return render_template("galactic_u/html/provision-step-1-nickname.html", board=model)
 
 
@@ -81,53 +108,11 @@ def provision_step_2_wifi(request):
     config.wifi_ssid = request.form["wifi_ssid"]
     config.wifi_password = request.form["wifi_password"]
     write_config()
-    return redirect(f"http://{DOMAIN}/provision-step-3-logging")
-  else:
-    return render_template("galactic_u/html/provision-step-2-wifi.html", board=model)
-  
-
-@server.route("/provision-step-3-logging", methods=["GET", "POST"])
-def provision_step_3_logging(request):
-  if request.method == "POST":
-    config.reading_frequency = int(request.form["reading_frequency"])
-    config.upload_frequency = int(request.form["upload_frequency"]) if request.form["upload_frequency"] else None
-    write_config()
-    return redirect(f"http://{DOMAIN}/provision-step-4-destination")
-  else:
-    return render_template("galactic_u/html/provision-step-3-logging.html", board=model)
-    
-
-@server.route("/provision-step-4-destination", methods=["GET", "POST"])
-def provision_step_4_destination(request):
-  if request.method == "POST":
-    config.destination = request.form["destination"]
-
-    # custom http endpoint
-    config.custom_http_url = request.form["custom_http_url"]
-    config.custom_http_username = request.form["custom_http_username"]
-    config.custom_http_password = request.form["custom_http_password"]
-
-    # mqtt
-    config.mqtt_broker_address = request.form["mqtt_broker_address"]
-    config.mqtt_broker_username = request.form["mqtt_broker_username"]
-    config.mqtt_broker_password = request.form["mqtt_broker_password"]
-
-    # adafruit io
-    config.adafruit_io_username = request.form["adafruit_io_username"]
-    config.adafruit_io_key = request.form["adafruit_io_key"]
-
-    # influxdb
-    config.influxdb_org = request.form["influxdb_org"]
-    config.influxdb_url = request.form["influxdb_url"]
-    config.influxdb_token = request.form["influxdb_token"]
-    config.influxdb_bucket = request.form["influxdb_bucket"]
-    
-    write_config()
-
     return redirect(f"http://{DOMAIN}/provision-step-5-done")
   else:
-    return render_template("galactic_u/html/provision-step-4-destination.html", board=model)
-    
+    draw_text("Step 2: WiFi", FOREGROUND, BACKGROUND, 0, -1)
+    return render_template("galactic_u/html/provision-step-2-wifi.html", board=model)
+  
 
 @server.route("/provision-step-5-done", methods=["GET", "POST"])
 def provision_step_5_done(request):
@@ -140,6 +125,7 @@ def provision_step_5_done(request):
     machine.reset()
     return
 
+  draw_text("Step 5: Done", FOREGROUND, BACKGROUND, 0, -1)
   return render_template("galactic_u/html/provision-step-5-done.html", board=model)
     
 

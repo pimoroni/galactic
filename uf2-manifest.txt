@@ -1,8 +1,8 @@
 main.py
-enviro/*.py
-enviro/boards/*.py
-enviro/destinations/*.py
-enviro/html/*.html
-enviro/html/images/*
+galactic_u/*.py
+galactic_u/boards/*.py
+galactic_u/destinations/*.py
+galactic_u/html/*.html
+galactic_u/html/images/*
 phew/__init__.py
 phew/phew/*.py

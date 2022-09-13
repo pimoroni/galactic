@@ -45,29 +45,10 @@ if galactic.low_disk_space():
   # are not getting uploaded so warn the user and halt with an error
   galactic.halt("! low disk space")
 
-# take a reading from the onboard sensors
-reading = galactic.get_sensor_readings()
-
-# here you can customise the sensor readings by adding extra information
-# or removing readings that you don't want, for example:
-# 
-#   del readings["temperature"]        # remove the temperature reading
-#
-#   readings["custom"] = my_reading()  # add my custom reading value
-
-# is an upload destination set?
-if galactic.config.destination:
-  # if so cache this reading for upload later
-  galactic.cache_upload(reading)
-
-  # if we have enough cached uploads...
-  if galactic.is_upload_needed():
-    galactic.logging.info(f"> {galactic.cached_upload_count()} cache files need uploading")
-    if not galactic.upload_readings():
-      galactic.halt("! reading upload failed")
-else:
-  # otherwise save reading to local csv file (look in "/readings")
-  galactic.save_reading(reading)
-
 # go to sleep until our next scheduled reading
-galactic.sleep()
+#galactic.sleep()
+
+import time
+time.sleep(5)
+
+import scenes.lava_lamp
